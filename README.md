@@ -10,7 +10,6 @@ Calculates the amount of money you have in a specific date when submitted to com
 
 - Print usage options:
 `--help` or `-h`
-- Inform initial amount:
 `--initial_amount` or `-ia` `5000.00`
 `--initial_date` or `-id` `2016-10-15`
 `--final_date` or `-fd` `2019-06-18`
