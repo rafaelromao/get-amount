@@ -8,7 +8,6 @@ Calculates the amount of money you have in a specific date when submitted to com
 
 *Get-Amount* parameters:
 
-- Print usage options:
 `--help` or `-h`
 `--initial_amount` or `-ia` `5000.00`
 `--initial_date` or `-id` `2016-10-15`
