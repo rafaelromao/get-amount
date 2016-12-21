@@ -6,7 +6,7 @@ function ParseArguments($input_args) {
 	$result | Add-Member -type NoteProperty -name initial_amount -value $null
 	$result | Add-Member -type NoteProperty -name initial_date -value $null
 	$result | Add-Member -type NoteProperty -name final_date -value $null
-	$result | Add-Member -type NoteProperty -name monthly_interest -value $null
+	$result | Add-Member -type NoteProperty -name anual_interest -value $null
 	$result | Add-Member -type NoteProperty -name anual_fee -value $null
 	$result | Add-Member -type NoteProperty -name final_tax -value $null
 
@@ -39,8 +39,8 @@ function ParseArguments($input_args) {
 			$result.final_date = "$($nextArg)"
 		}
 		
-		if ($arg -eq "--monthly_interest" -or $arg -eq "-mi") {
-			$result.monthly_interest = "$($nextArg)"
+		if ($arg -eq "--anual_interest" -or $arg -eq "-mi") {
+			$result.anual_interest = "$($nextArg)"
 		}
 
 		if ($arg -eq "--anual_fee" -or $arg -eq "-af") {
@@ -63,7 +63,7 @@ function CheckIfMustPrintHelp($printHelp, $hasCommitMessage) {
 		Write-Host "--initial_amount `t -ia `t Initial amount"
 		Write-Host "--initial_date `t`t`t -id `t Initial date"
 		Write-Host "--final_date `t`t -fd `t Final date"
-		Write-Host "--monthly_interest `t`t`t -mi `t Monthly interest"
+		Write-Host "--anual_interest `t`t`t -mi `t Monthly interest"
 		Write-Host "--anual_fee `t`t`t -af `t Anual fee"
 		Write-Host "--final_tax `t`t`t -ft `t Final tax"
 		Write-Host ""
@@ -75,28 +75,50 @@ function CheckIfMustPrintHelp($printHelp, $hasCommitMessage) {
 # Check, request and store mandatory parameters
 function CheckRequestAndStoreMandatoryParameters($arguments) {
 	if ($arguments.initial_amount -eq $null) {
-		Write-Host 'Informe your initial amount name: (5000.00)'
+        Write-Host 'Informe your initial amount name: [Default = 5000]'
 		$arguments.initial_amount = Read-Host;
 	}
+	if ([string]::IsNullOrEmpty($arguments.initial_amount)) { 
+        $arguments.initial_amount = 5000
+	}
+    $defaultInitialDate = "{0:yyyy-MM-dd}" -f (get-date -f "yyyy-MM-dd");
 	if ($arguments.initial_date -eq $null) {
-		Write-Host 'Informe the initial date: (2016-10-15)'
+		Write-Host 'Informe the initial date: [Default = ' $defaultInitialDate ']'
 		$arguments.initial_date = Read-Host;
 	}
+	if ([string]::IsNullOrEmpty($arguments.initial_date)) {
+        $arguments.initial_date = $defaultInitialDate;
+	}
 	if ($arguments.final_date -eq $null) {
-		Write-Host 'Informe the final date: (2016-06-18)'
+		Write-Host 'Informe the final date: [Default = 1800]'
 		$arguments.final_date = Read-Host;
 	}
-	if ($arguments.monthly_interest -eq $null) {
-		Write-Host 'Informe the monthly interest: (1.65)'
-		$arguments.monthly_interest = Read-Host;
+	if ([string]::IsNullOrEmpty($arguments.final_date)) {
+		$arguments.final_date = 1800;
+	}
+    if (([string]($arguments.final_date)).IndexOf("-") -eq -1) {
+        $arguments.final_date = "{0:yyyy-MM-dd}" -f ([DateTime]$arguments.initial_date).addDays([int]$arguments.final_date)
+    }
+	if ($arguments.anual_interest -eq $null) {
+		Write-Host 'Informe the anual interest: [Default = 14.00]'
+		$arguments.anual_interest = Read-Host;
+	}
+	if ([string]::IsNullOrEmpty($arguments.anual_interest)) {
+		$arguments.anual_interest = 14;
 	}
 	if ($arguments.anual_fee -eq $null) {
-		Write-Host 'Informe the anual fee: (1.00)'
+		Write-Host 'Informe the anual fee: [Default = 0.00]'
 		$arguments.anual_fee = Read-Host;
 	}
+    if ([string]::IsNullOrEmpty($arguments.anual_fee)) {
+		$arguments.anual_fee = 0;
+	}
 	if ($arguments.final_tax -eq $null) {
-		Write-Host 'Informe the final tax: (15.00)'
+		Write-Host 'Informe the final tax: [Default = 0.00]'
 		$arguments.final_tax = Read-Host;
+	}
+	if ([string]::IsNullOrEmpty($arguments.final_tax)) {
+		$arguments.final_tax = 0;
 	}
 
 	if ($arguments.debug) {
@@ -122,7 +144,7 @@ function GetAmountForArguments($arguments) {
 		Write-Host $totalMonths
 	}
 	for ($i = 0; $i -lt $totalMonths; $i++) {
-		$amortization = $amount * [double]$arguments.monthly_interest / 100
+		$amortization = $amount * [double]$arguments.anual_interest / 12 / 100
 		if ($arguments.debug) {
 			Write-Host $amortization
 		}
