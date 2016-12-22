@@ -39,7 +39,7 @@ function ParseArguments($input_args) {
 			$result.final_date = "$($nextArg)"
 		}
 		
-		if ($arg -eq "--anual_interest" -or $arg -eq "-mi") {
+		if ($arg -eq "--anual_interest" -or $arg -eq "ai") {
 			$result.anual_interest = "$($nextArg)"
 		}
 
@@ -63,7 +63,7 @@ function CheckIfMustPrintHelp($printHelp, $hasCommitMessage) {
 		Write-Host "--initial_amount `t -ia `t Initial amount"
 		Write-Host "--initial_date `t`t`t -id `t Initial date"
 		Write-Host "--final_date `t`t -fd `t Final date"
-		Write-Host "--anual_interest `t`t`t -mi `t Monthly interest"
+		Write-Host "--anual_interest `t`t`t -ai `t Anual interest"
 		Write-Host "--anual_fee `t`t`t -af `t Anual fee"
 		Write-Host "--final_tax `t`t`t -ft `t Final tax"
 		Write-Host ""
