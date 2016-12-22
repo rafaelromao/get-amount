@@ -16,6 +16,8 @@ Calculates the amount of money you have in a specific date when submitted to com
 
 `--final_date` or `-fd` `2019-06-18`
 
+`--monthly_interest` or `-mi` `1.17`
+
 `--anual_interest` or `-ai` `14.00`
 
 `--anual_fee` or `-af` `1.00`

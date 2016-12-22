@@ -7,6 +7,7 @@ function ParseArguments($input_args) {
 	$result | Add-Member -type NoteProperty -name initial_date -value $null
 	$result | Add-Member -type NoteProperty -name final_date -value $null
 	$result | Add-Member -type NoteProperty -name anual_interest -value $null
+	$result | Add-Member -type NoteProperty -name monthly_interest -value $null    
 	$result | Add-Member -type NoteProperty -name anual_fee -value $null
 	$result | Add-Member -type NoteProperty -name final_tax -value $null
 
@@ -39,8 +40,12 @@ function ParseArguments($input_args) {
 			$result.final_date = "$($nextArg)"
 		}
 		
-		if ($arg -eq "--anual_interest" -or $arg -eq "ai") {
+		if ($arg -eq "--anual_interest" -or $arg -eq "-ai") {
 			$result.anual_interest = "$($nextArg)"
+		}
+
+		if ($arg -eq "--monthly_interest" -or $arg -eq "-mi") {
+			$result.monthly_interest = "$($nextArg)"
 		}
 
 		if ($arg -eq "--anual_fee" -or $arg -eq "-af") {
@@ -64,6 +69,7 @@ function CheckIfMustPrintHelp($printHelp, $hasCommitMessage) {
 		Write-Host "--initial_date `t`t`t -id `t Initial date"
 		Write-Host "--final_date `t`t -fd `t Final date"
 		Write-Host "--anual_interest `t`t`t -ai `t Anual interest"
+		Write-Host "--monthly_interest `t`t`t -mi `t monthly interest"
 		Write-Host "--anual_fee `t`t`t -af `t Anual fee"
 		Write-Host "--final_tax `t`t`t -ft `t Final tax"
 		Write-Host ""
@@ -99,7 +105,7 @@ function CheckRequestAndStoreMandatoryParameters($arguments) {
     if (([string]($arguments.final_date)).IndexOf("-") -eq -1) {
         $arguments.final_date = "{0:yyyy-MM-dd}" -f ([DateTime]$arguments.initial_date).addDays([int]$arguments.final_date)
     }
-	if ($arguments.anual_interest -eq $null) {
+	if (($arguments.anual_interest -eq $null) && ($arguments.monthly_interest -eq $null)) {
 		Write-Host 'Informe the anual interest: [Default = 14.00]'
 		$arguments.anual_interest = Read-Host;
 	}
@@ -144,7 +150,11 @@ function GetAmountForArguments($arguments) {
 		Write-Host $totalMonths
 	}
 	for ($i = 0; $i -lt $totalMonths; $i++) {
-		$amortization = $amount * [double]$arguments.anual_interest / 12 / 100
+        if ($arguments.monthly_interest -ne $null) {
+            $amortization = $amount * [double]$arguments.monthly_interest / 100
+        } else {
+    		$amortization = $amount * [double]$arguments.anual_interest / 12 / 100
+        }
 		if ($arguments.debug) {
 			Write-Host $amortization
 		}
