@@ -105,7 +105,7 @@ function CheckRequestAndStoreMandatoryParameters($arguments) {
     if (([string]($arguments.final_date)).IndexOf("-") -eq -1) {
         $arguments.final_date = "{0:yyyy-MM-dd}" -f ([DateTime]$arguments.initial_date).addDays([int]$arguments.final_date)
     }
-	if (($arguments.anual_interest -eq $null) && ($arguments.monthly_interest -eq $null)) {
+	if (($arguments.anual_interest -eq $null) -and ($arguments.monthly_interest -eq $null)) {
 		Write-Host 'Informe the anual interest: [Default = 14.00]'
 		$arguments.anual_interest = Read-Host;
 	}
