@@ -167,7 +167,7 @@ function GetAmountForArguments($arguments) {
 	if ($arguments.debug) {
 		Write-Host $totalYears
 	}
-	$anualfee = $amount * $totalYears * [double]$arguments.anual_fee / 100
+	$anualfee = ($amount - [double]$arguments.initial_amount) * $totalYears * [double]$arguments.anual_fee / 100
 	if ($arguments.debug) {
 		Write-Host $anualfee
 	}
